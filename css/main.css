@@ -4,6 +4,36 @@ body{
 	color: #666;
 	line-height: 2;
 }
+
+div#toptitle {
+	padding-bottom: 0.2em;
+	margin-bottom: 1.0em;
+	border-bottom: 3px double gray;
+	margin-top:0.0em;
+}
+h1, h2, h3 {
+	color: #111;
+	margin-top: 0.0em;
+	margin-bottom: 0.0em;
+	padding-bottom: 0.2em;
+	line-height: 1.0;
+	padding-top: 0.5em;
+	border-bottom: 1px solid #fff;
+	font-weight: normal;
+}
+h1 {
+	font-size: 18px;
+}
+h2 {
+	font-size: 125%;
+}
+
+div#profilepic{
+	padding-top: 0.1em;
+	padding-left: 0.5em;
+	padding-bottom: 0.1em;
+	padding-right: 0.1em;
+}
 .features{
 	padding: 5%;
 }
