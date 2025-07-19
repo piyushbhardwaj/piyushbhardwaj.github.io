@@ -3,7 +3,7 @@ email: "bhardwaaj.piyush@gmail.com"
 description: >-
   ML Engineer | Quant Researcher | Ex-Goldman Sachs
 baseurl: "" 
-url: "https://yourusername.github.io"
+url: "https://piyushbhardwaj.github.io"
 remote_theme: mmistakes/minimal-mistakes
 plugins:
   - jekyll-feed
@@ -11,7 +11,7 @@ plugins:
   - jekyll-sitemap
   - jekyll-archives
   - jekyll-include-cache
-
+katex: true	
 author:
   name   : "Piyush Bhardwaj"
   avatar : "/assets/images/profile_pic.jpg"
@@ -29,6 +29,7 @@ defaults:
     values:
       layout: single
       author_profile: true
+      math: true
   - scope:
       path: ""
       type: posts
