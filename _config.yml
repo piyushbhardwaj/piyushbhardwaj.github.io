@@ -1,1 +1,37 @@
-theme: jekyll-theme-slate
+title: "Piyush Bhardwaj"
+email: "bhardwaaj.piyush@gmail.com"
+description: >-
+  ML Engineer | Quant Researcher | Ex-Goldman Sachs
+baseurl: "" 
+url: "https://yourusername.github.io"
+theme: minimal-mistakes-jekyll
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-archives
+
+author:
+  name   : "Piyush Bhardwaj"
+  avatar : "/assets/images/profile_pic.jpg"
+  bio    : "ML Engineer | Interested in Quant Finance and Kernel Methods"
+  location: "India"
+  email: "bhardwaaj.piyush@gmail.com"
+
+include:
+  - _pages
+
+defaults:
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: single
+      author_profile: true
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
