@@ -4,8 +4,7 @@ description: >-
   ML Engineer | Quant Researcher | Ex-Goldman Sachs
 baseurl: "" 
 url: "https://yourusername.github.io"
-theme: minimal-mistakes-jekyll
-
+remote_theme: mmistakes/minimal-mistakes
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
