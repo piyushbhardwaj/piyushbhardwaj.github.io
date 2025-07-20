@@ -18,7 +18,7 @@ author:
   bio    : "ML Engineer | Interested in Quant Finance and Kernel Methods"
   location: "India"
   email: "bhardwaaj.piyush@gmail.com"
-
+minimal_mistakes_skin: "dark"
 include:
   - _pages
 
@@ -37,3 +37,7 @@ defaults:
       layout: single
       author_profile: false
       math: true
+  - scope:
+      path: ""
+    values:
+      css: "/assets/css/custom.css"
