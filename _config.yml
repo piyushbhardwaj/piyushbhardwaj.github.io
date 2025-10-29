@@ -230,7 +230,6 @@ plugins:
   - jekyll-toc
   - jekyll-twitter-plugin
   - jemoji
-  - faraday-retry
 
 # Sitemap settings
 defaults:
