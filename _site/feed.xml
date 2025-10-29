@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="http://0.0.0.0:8080/al-folio/feed.xml" rel="self" type="application/atom+xml" /><link href="http://0.0.0.0:8080/al-folio/" rel="alternate" type="text/html" hreflang="en" /><updated>2025-10-29T18:18:38+00:00</updated><id>http://0.0.0.0:8080/al-folio/feed.xml</id><title type="html">blank</title><subtitle>A simple, whitespace theme for academics. Based on [*folio](https://github.com/bogoli/-folio) design.
+</subtitle><entry><title type="html">Understanding the Attention Mechanism in Transformers</title><link href="http://0.0.0.0:8080/al-folio/blog/2025/understanding-transformers/" rel="alternate" type="text/html" title="Understanding the Attention Mechanism in Transformers" /><published>2025-10-28T22:54:00+00:00</published><updated>2025-10-28T22:54:00+00:00</updated><id>http://0.0.0.0:8080/al-folio/blog/2025/understanding-transformers</id><content type="html" xml:base="http://0.0.0.0:8080/al-folio/blog/2025/understanding-transformers/"><![CDATA[<p>At an API level, an <strong>attention layer</strong> is a sequence to sequence model that takes a sequence of input vectors and produces a new, modified sequence of output vectors of the same or different dimension.</p>
+
+<p>This note builds up the attention mechanism step by step, starting from the simplest case and gradually adding complexity. We will proceed as follows:</p>
+
+<ol>
+  <li>Attention with a single query vector</li>
+  <li>Attention with a sequence of query vectors</li>
+  <li>Attention with learnable parameters</li>
+</ol>
+
+<p>An attention layer receives a sequence of <strong>query</strong> vectors, a sequence of <strong>key</strong> vectors and a corresponding set of <strong>value</strong> vectors (same number as keys). Attention layer behaves like a fuzzy dictionary, finding keys closest to the query and returning the value corresponding to the keys. The final returned value is weighted sum of all given values with weights being equal to the similarity between the corresponding key and query. We will show mathematically how this is done.</p>
+
+<h4 id="1-attention-with-a-single-query-vector">1. Attention with a Single Query Vector</h4>
+<p>In the first setting, we consider a case where the sequence of query vectors has only a single query vector. This is represented by matrix $Q_{1\times d}$. We have $N_k$ keys represented by rows of matrix $K_{N_k \times d}$. Number of value vectors are equal to number of keys $N_k$, as corresponding to each key there is a single value.</p>
+
+<p>Similarity matrix is computed as:</p>
+
+\[S_{1\times N_k} = Softmax(Q_{1\times d}K_{N_k\times d}^T)\]
+
+<p>Finally, to get the output value vector we will take a weighted sum of $N_k$ “value” vectors, where the weights are based on the similarity scores in S. The scores are normalized by applying softmax operation across each <strong>row</strong> of matrix $QK^T$. The softmax ensures that all weights are positive and sum to one. Note that we need each query and key to be in the same dimension space to allow for dot product similarity.</p>
+
+\[Attention(Q,K,V)_{1\times d} = S_{1\times N_k}V_{N_k\times d}\]
+
+<h6 id="computational-complexity">Computational Complexity</h6>
+
+<ol>
+  <li>Computation of matrix $QK^T$ takes $N_k\times d$ multiplication operations</li>
+  <li>Normalization through softmax takes $N_k$ steps, considdering $exp()$ operations takes$O(1)$ time with small constant as it is hardware accelerated on GPU and on CPU fast exponentiation libraries like in math.h in C++ exist.</li>
+  <li>Finally computing weighted sum of “values” will take $N_k\times d$ multiplications.</li>
+</ol>
+
+\[{\text{Time complexity: } O(N_k d)}\]
+
+<h4 id="2-attention-with-a-sequence-of-query-vectors">2. Attention with a Sequence of Query Vectors</h4>
+<p>Now lets consider slightly more complicated setting where we have $N_q$ queries, each represented by a row in matrix $Q_{N_q \times d}$. Similar to single query scenario, we compute dot product similarity between each query and key as</p>
+
+\[S_{N_q \times N_k} = softmax(QK^T)\]
+
+<p>Each row of S represents similarity score of that query with all the $N_k$ keys. Finally multiply S with value matrix $V_{N_k \times d}$ to get $N_q$ output values.</p>
+
+\[Attention(Q,K,V)_{N_q\times d} = S_{N_q \times N_k} V_{N_k \times d}\]
+
+\[\text{Time complexity}: O(N_q \times N_k \times d)\]
+
+<p>This is assuming that “query” vector dimension and “value” vector dimension are the same. However, this may not always be true. If “value” vector has dimension d_v:</p>
+
+\[\text{Time complexity}:O(N_q \times N_k \times d + N_q \times N_k \times d_v)\]
+
+<p>In <strong>self-attention</strong>, same sequence of 
+vectors are passed as key, query and values i.e. $N_q = N_v = N_k = N$ and we assume output value vectors to be in same dimension i.e. $d_v = d$. Thus, we get</p>
+
+\[\boxed{\text{Time complexity}: O(N^2*d)}\]
+
+<h5 id="scaling-softmax">Scaling Softmax</h5>
+<p>There is also a scaling nuance we need to address before moving further. Let’s focus on similarity matrix $S$. Suppose each entry of query Q and key K is an independent random variable with $\mu=0$, $\sigma^2 = 1$. Then,</p>
+
+\[\begin{align*}E[s_{ij}] &amp;= E[\mathbf{q}_i \cdot \mathbf{k}_j] = E\left[\sum_t q_{it}k_{jt}\right] = \sum_t E[q_{it}k_{jt}] \text{ (by linearity of expectation)} \\
+&amp;= \sum_t E[q_{it}]E[k_{jt}] \text{ (independence of random variables) } \\
+&amp;= 0
+\end{align*}\]
+
+<p>So, expected value of each term before softmax operation is 0. Let’s also check its variance.</p>
+
+\[\begin{align*}
+\operatorname{Var}[s_{ij}] &amp;= \operatorname{Var}\left[\sum_t q_{it} k_{jt}\right] \\
+&amp;= \sum_t \operatorname{Var}[q_{it} k_{jt}] \text{ (since each of summand is independent)}\\
+&amp;= \sum \operatorname{Var}[q_{it}] \operatorname{Var}[k_{jt}] \\
+&amp;= d
+\end{align*}\]
+
+<p>Last equality follows since $Var(XY) = E[X^2Y^2]- (E[XY])^2 = E[X^2]E[Y^2] = Var(X)Var(Y)$</p>
+
+<p>This shows that each $s_{ij}$ has mean $0$ but variance is large ($d$). As we do softmax, for large values of $s_{ij}$, softmax saturates i.e. the derivative of softmax vanishes leading to learning being stopped in gradient descent. To avoid this we need to prevent $s_{ij}$ from getting too large. We scale $s_{ij}$ by $\frac{1}{\sqrt d}$ as $var[s_{ij}/\sqrt(d)] = var[s_{ij}]/d = 1$</p>
+
+<h4 id="3-attention-with-learnable-weights-parameters">3. Attention with learnable weights parameters</h4>
+<p>So far the attention block has no learnable parameters, it is simply a fuzzy dictionary. As next layer of complexity we linearly transform the queries, keys and values into another vector space of different dimension before computing similarity matrix.</p>
+<ol>
+  <li>Keys are linearly transformed as</li>
+</ol>
+
+\[\hat{K}_{N_k \times d_k} = K_{N_k \times d}*W^K_{d \times d_k}\]
+
+<ol>
+  <li>Queries are in the same dimension space as keys</li>
+</ol>
+
+\[\hat{Q}_{N_q \times d_k} = Q_{N_q \times d}*W^Q_{d \times d_k}\]
+
+<ol>
+  <li>Values are transformed as</li>
+</ol>
+
+\[\hat{V}_{N_k X d_v} = V_{N_k \times d}*W^V_{d \times d_v}\]
+
+<p>Again we do the same similarity matrix computation followed by softmax and multiplication by V_hat to get attention output sequence.</p>
+
+\[\boxed{Attention(Q,K,V)_{N_q\times d} = softmax(\frac{\hat{Q}\hat{K}^T}{\sqrt{d}})\hat{V}}\]
+
+<p>Time Complexity is $O(N_k \times N_q \times d_k + N_k \times N_q \times d_v + N_k \times d_k \times d + N_q \times d_k \times d + N_k \times d_v \times d)$.</p>
+
+<p>For self attention, assuming output sequence vector is of dimension $d_v = d$:</p>
+
+\[O(N^2d + Nd^2 )\]
+
+<p>since $N » d$ (long context window) self attention is practically $O(N^2d)$. The qudratic complexity in context length makes attention expensive for long sequences.</p>
+
+<p>##### How many learnable parameters does attention layer has? 
+   Considering keys, queries and values are all transformed to same dimension $d$ equal to the input dimension, total learnable parameters: $3d^2$. Note, learnable parameters matrix doesn’t depend on length of input sequence. This makes intuitive sense, as each training example can be of different sequence length (each input sentence can have different number of words/token) and still we can update parameters of the model.</p>
+
+<hr />
+
+<h2 id="closing-remarks">Closing Remarks</h2>
+
+<p>Further extensions — <strong>multi-head attention</strong>, <strong>cross-attention</strong>, and <strong>masked attention</strong> — expand this mechanism to capture richer relationships. We will explore these in future notes.</p>]]></content><author><name></name></author><category term="deep-learning" /><category term="transformers" /><category term="attention" /><category term="transformers" /><category term="neural-networks" /><summary type="html"><![CDATA[At an API level, an attention layer is a sequence to sequence model that takes a sequence of input vectors and produces a new, modified sequence of output vectors of the same or different dimension.]]></summary></entry><entry><title type="html">a post with math</title><link href="http://0.0.0.0:8080/al-folio/blog/2015/math/" rel="alternate" type="text/html" title="a post with math" /><published>2015-10-20T15:12:00+00:00</published><updated>2015-10-20T15:12:00+00:00</updated><id>http://0.0.0.0:8080/al-folio/blog/2015/math</id><content type="html" xml:base="http://0.0.0.0:8080/al-folio/blog/2015/math/"><![CDATA[<p>This theme supports rendering beautiful math in inline and display modes using <a href="https://www.mathjax.org/">MathJax 3</a> engine. You just need to surround your math expression with <code class="language-plaintext highlighter-rouge">$$</code>, like <code class="language-plaintext highlighter-rouge">$$ E = mc^2 $$</code>. If you leave it inside a paragraph, it will produce an inline expression, just like \(E = mc^2\).</p>
+
+<p>To use display mode, again surround your expression with <code class="language-plaintext highlighter-rouge">$$</code> and place it as a separate paragraph. Here is an example:</p>
+
+\[\sum_{k=1}^\infty |\langle x, e_k \rangle|^2 \leq \|x\|^2\]
+
+<p>You can also use <code class="language-plaintext highlighter-rouge">\begin{equation}...\end{equation}</code> instead of <code class="language-plaintext highlighter-rouge">$$</code> for display mode math.
+MathJax will automatically number equations:</p>
+
+<p>\begin{equation}
+\label{eq:cauchy-schwarz}
+\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)
+\end{equation}</p>
+
+<p>and by adding <code class="language-plaintext highlighter-rouge">\label{...}</code> inside the equation environment, we can now refer to the equation using <code class="language-plaintext highlighter-rouge">\eqref</code>.</p>
+
+<p>Note that MathJax 3 is <a href="https://docs.mathjax.org/en/latest/upgrading/whats-new-3.0.html">a major re-write of MathJax</a> that brought a significant improvement to the loading and rendering speed, which is now <a href="http://www.intmath.com/cg5/katex-mathjax-comparison.php">on par with KaTeX</a>.</p>]]></content><author><name></name></author><category term="sample-posts" /><category term="formatting" /><category term="math" /><summary type="html"><![CDATA[an example of a blog post with some math]]></summary></entry></feed>
