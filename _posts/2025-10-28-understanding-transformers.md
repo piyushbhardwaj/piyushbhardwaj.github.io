@@ -69,7 +69,7 @@ $$
 In **self-attention**, same sequence of 
 vectors are passed as key, query and values i.e. $N_q = N_v = N_k = N$ and we assume output value vectors to be in same dimension i.e. $d_v = d$. Thus, we get 
 
-$$\boxed{\text{Time complexity}: O(N^2*d)}$$ 
+$$\boxed{\text{Time complexity}: O(N^2d)}$$ 
 
 
 ##### Scaling Softmax
@@ -109,50 +109,70 @@ This shows that each $s_{ij}$ has mean $0$ but variance is large ($d$). As we do
 
 #### 3. Attention with learnable weights parameters
  So far the attention block has no learnable parameters, it is simply a fuzzy dictionary. As next layer of complexity we linearly transform the queries, keys and values into another vector space of different dimension before computing similarity matrix. 
- 1. Keys are linearly transformed as 
+1. Keys are linearly transformed as 
    
    $$
    \hat{K}_{N_k \times d_k} = K_{N_k \times d}*W^K_{d \times d_k} 
    $$
 
-   2. Queries are in the same dimension space as keys 
+2. Queries are in the same dimension space as keys 
    
    $$
    \hat{Q}_{N_q \times d_k} = Q_{N_q \times d}*W^Q_{d \times d_k}
    $$
    
-   3. Values are transformed as 
+3. Values are transformed as 
    
    $$
    \hat{V}_{N_k X d_v} = V_{N_k \times d}*W^V_{d \times d_v} 
    $$ 
    
-   Again we do the same similarity matrix computation followed by softmax and multiplication by V_hat to get attention output sequence. 
+Again we do the same similarity matrix computation followed by softmax and multiplication by V_hat to get attention output sequence. 
    
    $$
    \boxed{Attention(Q,K,V)_{N_q\times d} = softmax(\frac{\hat{Q}\hat{K}^T}{\sqrt{d}})\hat{V}}
    $$
    
-   Time Complexity is $O(N_k \times N_q \times d_k + N_k \times N_q \times d_v + N_k \times d_k \times d + N_q \times d_k \times d + N_k \times d_v \times d)$. 
+Time Complexity is $O(N_k \times N_q \times d_k + N_k \times N_q \times d_v + N_k \times d_k \times d + N_q \times d_k \times d + N_k \times d_v \times d)$. 
    
-   For self attention, assuming output sequence vector is of dimension $d_v = d$: 
+For self attention, assuming output sequence vector is of dimension $d_v = d$: 
    
    $$
    O(N^2d + Nd^2 )
    $$
    
-   since N >> d (long context window) self attention is practically $O(N^2d)$. The qudratic complexity in context length makes attention expensive for long sequences. 
+since $N >> d$ (long context window) self attention is practically $O(N^2d)$. The qudratic complexity in context length makes attention expensive for long sequences. 
 
-   #### How many learnable parameters does attention layer has? 
-   Considering keys, queries and values are all transformed to same dimension $d$ equal to the input dimension, total learnable parameters: $3d^2$. Note, learnable parameters matrix doesn't depend on length of input sequence. This makes intuitive sense, as each training example can be of different sequence length (each input sentence can have different number of words/token) and still we can update parameters of the model.
+#### How many learnable parameters does attention layer has? 
+Considering keys, queries and values are all transformed to same dimension $d$ equal to the input dimension, total learnable parameters: $3d^2$. Note, learnable parameters matrix doesn't depend on length of input sequence. This makes intuitive sense, as each training example can be of different sequence length (each input sentence can have different number of words/token) and still we can update parameters of the model.
 
-   #### Intuition of attention
-   The output values are supposed to capture the contextual information from other tokens in the sentence. The softmax weights dictate the importance of each token in the output vector for a given input token. However, to think about it the softmax matrix is just a dot product similarity matrix. Why should that be equivalent to contextual information? It is hard to put this down in a small blog post and perhaps needs another blog post of its own. However, to put it succinctly, the magic is happening in the weights matrices $W_Q$, $W_K$ and $W_V$. Each matrix linearly transforms the input vector into another vector space where it's meaning is transformed from itself to "some contextual aspect". What the "contextual aspect" is going to be is left upto the network to learn by adapting the weight matrices. It would be interesting to see post the training finishes what these matrices turn out to be and what they actually mean in different learning tasks. Often instead of learning a single large $W_Q$, $W_K$ and $W_V$, we learn multiple such matrices (called attention heads) and contenate the result of each head to form the final output vector. 
+#### Intuition of attention
+The output values are supposed to capture the contextual information from other tokens in the sentence. The softmax weights dictate the importance of each token in the output vector for a given input token. However, the softmax matrix is just a dot product similarity matrix. Why should that be equivalent to contextual information? It is hard to put this down in a small blog post and perhaps needs another blog post of its own. However, to put it succinctly, the magic is happening in the weights matrices $W_Q$, $W_K$ and $W_V$. Each matrix linearly transforms the input vector into another vector space where it's meaning is transformed from itself to "some contextual aspect". What the "contextual aspect" is going to be is left upto the network to learn by adapting the weight matrices. It would be interesting to see post the training finishes what these matrices turn out to be and what they actually mean in different learning tasks. Often instead of learning a single large $W_Q$, $W_K$ and $W_V$, we learn multiple such matrices (called attention heads) and contenate the result of each head to form the final output vector. 
 
-   ### 4. Multi-head Attention
+### 4. Multi-head Attention
+
+In multi-head attention we transform each key, query and value matrix into $H$ different sub-spaces by using $H$ different weight matrices. For instance now we will have $H$ different weight matrices $W^K_1, W^K_2,\ldots, W^K_H$ for transforming key matrix $K$. 
+
+1. Keys are linearly transformed as 
+   
+   $$
+   \hat{K}_{N_k \times d_k} = K_{N_k \times d}*W^K_{d \times d_k} 
+   $$
+
+2. Queries are in the same dimension space as keys 
+   
+   $$
+   \hat{Q}_{N_q \times d_k} = Q_{N_q \times d}*W^Q_{d \times d_k}
+   $$
+   
+3. Values are transformed as 
+   
+   $$
+   \hat{V}_{N_k X d_v} = V_{N_k \times d}*W^V_{d \times d_v} 
+   $$ 
 
 ---
 
-## Closing Remarks
+### Closing Remarks
 
 Further extensions — **multi-head attention**, **cross-attention**, and **masked attention** — expand this mechanism to capture richer relationships. We will explore these in future notes.
