@@ -7,7 +7,7 @@ tags: [attention, transformers, neural-networks]
 giscus_comments: true
 ---
 
-At an API level, a transformer block can be thought of as a sequence-to-sequence model that takes a sequence of vectors as input and produces a new, modified sequence of vectors as the output. Transformer block itself has an attention layer and a feed-forward layer. The attention layer in itself is also a sequence-to-sequence layer. In this note we will focus on the attention layer, starting from a simple case and gradually building complexity. We will proceed as follows:
+At an API level, a transformer block can be thought of as a sequence-to-sequence model that takes a sequence of vectors as input and produces a new, modified sequence of vectors as the output. Transformer block has an attention layer and a feed-forward layer. The attention layer in itself is also a sequence-to-sequence layer. In this note we will focus on the attention layer, starting from a simple case and gradually building complexity. We will proceed as follows:
 
 1. Attention with a single query vector  
 2. Attention with a sequence of query vectors  
@@ -23,7 +23,7 @@ At an API level, a transformer block can be thought of as a sequence-to-sequence
     Transformer block with attention and feed-forward layer
 </div>
 
- An attention layer receives a sequence of **query** vectors, a sequence of **key-value** vector pairs. Attention layer behaves like a fuzzy dictionary, finding keys closest to the query and returning the value corresponding to the keys. The final returned value is weighted sum of all given values with weight as similarity between corresponding key and query. We will show the algebra of how this is done. 
+ An attention layer receives a sequence of **query** vectors and a sequence of **key-value** vector pairs. Attention layer behaves like a fuzzy dictionary, finding keys closest to the query and returning the value corresponding to the keys. The final returned value is weighted sum of all given values with weight as similarity between key and query. We will show the algebra of how this is done. 
 
 #### 1. Attention with a Single Query Vector
 In the first setting, we consider a case where the sequence of query vectors has only a single query vector. This is represented by matrix $Q_{1\times d}$. We have $N_k$ keys represented by rows of matrix $K_{N_k \times d}$. Number of value vectors are equal to number of keys $N_k$, as corresponding to each key there is a single value. The similarity matrix is computed as: 
