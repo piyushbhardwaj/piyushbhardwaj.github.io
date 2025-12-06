@@ -4,7 +4,7 @@ title: "Understanding the Attention Mechanism in Transformers"
 date: 2025-10-28 22:54:00
 categories: [deep-learning, transformers]
 tags: [attention, transformers, neural-networks]
-disqus_comments: true
+giscus_comments: true
 ---
 
 At an API level, a transformer block can be thought of as a sequence-to-sequence model that takes a sequence of vectors as input and produces a new, modified sequence of vectors as the output. Transformer block itself has an attention layer and a feed-forward layer. The attention layer in itself is also a sequence-to-sequence layer. In this note we will focus on the attention layer, starting from a simple case and gradually building complexity. We will proceed as follows:
