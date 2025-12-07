@@ -26,7 +26,7 @@ At an API level, a transformer block can be thought of as a sequence-to-sequence
  An attention layer receives a sequence of **query** vectors and a sequence of **key-value** vector pairs. Attention layer behaves like a fuzzy dictionary, finding keys closest to the query and returning the value corresponding to the keys. The final returned value is weighted sum of all given values with weight as similarity between key and query. We will show the algebra of how this is done. 
 
 #### 1. Attention with a Single Query Vector
-In the first setting, we consider a case where the sequence of query vectors has only a single query vector. This is represented by matrix $Q_{1\times d}$. We have $N_k$ keys represented by rows of matrix $K_{N_k \times d}$. Number of value vectors are equal to number of keys $N_k$, as corresponding to each key there is a single value. The similarity matrix is computed as: 
+In the first setting, we consider a case where the sequence of query vectors has a single query vector. This is represented by matrix $Q_{1\times d}$. We have $N_k$ keys represented by rows of matrix $K_{N_k \times d}$. The similarity matrix is computed as: 
 
 $$
 S_{1\times N_k} = Softmax(Q_{1\times d}K_{N_k\times d}^T)
