@@ -16,7 +16,7 @@ We start by looking at the word2vec continuous bag of words model, with negative
 
 <div class="row justify-content-sm-center">
   <div class="col-sm-8 mt-2 mt-md-0">
-    {% include figure.liquid loading="eager" path="assets/img/Word2Vec.png" class="img-fluid rounded z-depth-1" %}
+    {% include figure.liquid loading="eager" path="assets/img/Word2Vec_color.png" class="img-fluid rounded z-depth-1" %}
   </div>
 </div>
 <div class="caption">Word2Vec</div>
@@ -125,7 +125,7 @@ Note that we could have also maximized a slightly different objective function: 
 Derivation of update steps is similar to the softmax case:
 
 $$
-f(q_{0},\,\ldots,\,q_{n_i},h) =\,\log\Big(P(W_O^{j^*}|\mathcal{C})\big(\Pi_{j\in\mathcal{N}} (1-P(W_O^{j}|\mathcal{C}))\big)\Big) = \log \sigma(q_{j^*}^Th) + \sum_{j\in \mathcal{N}}\log \sigma(-q_j^Th)
+f(q_{0},\,\ldots,\,q_{n_o},h) =\,\log\Big(P(W_O^{j^*}|\mathcal{C})\big(\Pi_{j\in\mathcal{N}} (1-P(W_O^{j}|\mathcal{C}))\big)\Big) = \log \sigma(q_{j^*}^Th) + \sum_{j\in \mathcal{N}}\log \sigma(-q_j^Th)
 $$
 
 $$
