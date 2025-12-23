@@ -145,6 +145,7 @@ $$
 $$
 
 We can use similar approach to compute $\Delta f(B_t)$, but we can't ignore the quadratic term since we know from equation \ref{db2} that $\Delta B^2 = \Delta t$. 
+
 $$
 \begin{align*}
     \Delta f(B_t) &= f(B_t+\Delta B_t) - f(B_t) \\
@@ -210,31 +211,34 @@ $$
 \end{align*}
 $$
 
+##### Example: Product and Quotient rule
+We can use the above theory and try to compute dervative for $f(X,Y)=XY$ where both $X$ and $Y$ are stochastic processes. We already know for non stochastic variables, this is the product rule:
+
+$$
+d(XY) = XdY + YdX
+$$
+
+For stochastic process, considering all second order terms:
+
+$$
+\begin{align*}
+d(XY) &= \frac{\partial f}{\partial X}dX + \frac{\partial f}{\partial Y}dY + \cancelto{0}{\frac{1}{2} \frac{\partial^2 f}{\partial X^2}dX^2} +  \cancelto{0}{\frac{1}{2} \frac{\partial^2 f}{\partial Y^2}dY^2} + \frac{\partial^2 f}{\partial X \partial Y}dXdY\\
+&= YdX + XdY + dXdY
+\end{align*}
+$$
+
+Similarly for $f(X,Y) = \frac{X}{Y}$:
+
+$$
+\begin{align*}
+d(XY) &= \frac{\partial f}{\partial X}dX + \frac{\partial f}{\partial Y}dY + \cancelto{0}{\frac{1}{2} \frac{\partial^2 f}{\partial X^2}dX^2} +  \frac{1}{2} \frac{\partial^2 f}{\partial Y^2}dY^2 +  \frac{\partial^2 f}{\partial X \partial Y}dXdY\\
+&= \frac{1}{Y}dX - \frac{X}{Y^2}dY + \frac{X}{Y^3} dY^2 - \frac{1}{Y^2}dXdY
+\end{align*}
+$$
+
+<!--##### Application to option pricing (will come back to this)
+Lets use our understanding to further apply to derivatives of european call option price. 
+-->
+
 ### Conclusion
-That's it! These are the main results to know in stochastic calculus to be able to understand some of the derivatives pricing equations like BSM. There is endless more maths involved but I think understanding the above should be enough to compute on our own some of the arithmetic. For instance, the classical calculus result of product rule and quotient rule can be extended to ito's calculus as well. 
-
-- Classical: $d(XY) = XdY + YdX$
-- Ito's: $d(XY) = XdY + YdX + dX dY$
-
-This result can be obtained by writing higher order terms in classical calculus formula of differential of two variable function $f(X,Y)$. 
-
-$$
-\begin{align*}
-\label{eq:2var}
-    df(X,Y) = \frac{\partial f}{\partial Y}dY + \frac{\partial f}{\partial X}dX + \frac{1}{2} \frac{\partial^2 f}{\partial X^2} dX^2 +\frac{1}{2} \frac{\partial^2 f}{\partial Y^2} dY^2 + \frac{\partial^2 f}{\partial X \partial Y } dXdY 
-\end{align*}
-$$
-
-For $f(X,Y) = XY$ we can get the above result. Similarly, lets try for $f(X,Y) = \frac{X}{Y}$
-
-$$
-\begin{align*}
-\label{eq:itoquotr}
-    df(X,Y) = -\frac{X}{Y^2}dY + \frac{1}{Y}dX + \frac{X}{Y^3} dY^2 - \frac{1}{Y^2} dXdY 
-\end{align*}
-$$
-
-### References
-- MIT Topics in Mathematics with Applications in Finance: https://ocw.mit.edu/courses/18-s096-topics-in-mathematics-with-applications-in-finance-fall-2013/resources/mit18_s096f13_lecnote18/
-- QuantPie: https://quantpie.co.uk/
-Classical calculus tools are not available for stochastic process $B$ as the differential operator can't be defined in the classical sense. However, often we want to study small change in a smooth function of a stochastic process $f(B_t)$. In order to understand how we can compute this $\Delta f(B_t)$, we first try to compute this for a regular function $f(x)$ using Taylor's expansion at $x$: 
+That's it! These are the main results to know in stochastic calculus to be able to understand some of the derivatives pricing equations like BSM. There is endless more maths involved but I think understanding the above should be enough to compute on our own some of the arithmetic. Some references for above material are: {% cite mit_financial_maths %} and {% cite quantpie %}
