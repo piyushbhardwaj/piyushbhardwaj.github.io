@@ -184,7 +184,7 @@ exclude:
   - package.json
   - package-lock.json
   - _pages/about_einstein.md
-  - _pages/publications.md
+  #- _pages/publications.md
   - _pages/cv.md
   - _pages/books.md
   - _pages/teaching.md
