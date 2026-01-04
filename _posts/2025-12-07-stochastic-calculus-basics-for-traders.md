@@ -166,7 +166,7 @@ $$
 So far we saw the case where $f$ is a single parameter function. Through dependence on $B$, $f$ was indirectly dependent on time through stochasticity of $B$. However, in some other commonly encountered scenarios $f$ may have an explicit dependence on time as well. For instance, for call option at strike $K$ with time to expiry $t$, its price can be expressed as:
 $$
 \begin{align*}
-C(S_T, t) = e^{-r(T-t)}E[max(S_T-K, 0)]
+C(K, t) = e^{-r(T-t)}E^Q[max(S_T-K, 0)]
 \end{align*}
 $$
 
@@ -209,6 +209,28 @@ $$
     df(t,X)&= \frac{\partial f}{\partial t}dt + \frac{\partial f}{\partial X}\left( \mu Xdt + \sigma XdB\right) + \frac{1}{2} \frac{\partial^2 f}{\partial X^2} \left(\mu  Xdt + \sigma XdB\right)^2 \\
     &=\left(\frac{\partial f}{\partial t} + \mu X\frac{\partial f}{\partial X} + \frac{1}{2} {\sigma}^2 X^2\frac{\partial^2 f}{\partial X^2}\right)dt + \sigma X\frac{\partial f}{\partial X}dB
 \end{align*}
+$$
+
+##### Example: Application to log of stock price
+Consider $f(X) = \ln(X)$, then from above extension we note:
+
+$$
+\begin{align}
+\label{eq:ito_lns}
+d(ln(X)) &= \frac{\partial f}{\partial X}dX + \frac{1}{2} \frac{\partial^2 f}{\partial X^2} (dX)^2\\
+&= \frac{dX}{X} - \frac{\sigma^2dt}{2}\\
+&= \left(\mu - \frac{1}{2} {\sigma}^2\right)dt + \sigma dB
+\end{align}
+$$
+
+Integrating this from 0 to $t$ shows that log returns follow nonrmal distribution or stock prices have log normal distribution:
+<a id="eq-log-returns"></a>
+$$
+\begin{align}
+\label{eq:log_returns}
+{\int_0}^t d(\ln(x)) &= \left( \mu - \frac{1}{2} {\sigma}^2 \right)t + \sigma B(t) \\
+\ln\frac{X_t}{X_0} &\sim N\left(\left( \mu - \frac{1}{2} {\sigma}^2 \right)t, \sigma^2t\right)
+\end{align}
 $$
 
 ##### Example: Product and Quotient rule
